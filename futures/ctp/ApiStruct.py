@@ -1894,6 +1894,24 @@ class BaseStruct(object):
     def __repr__(self):
         return '%s(%s)' % (self.__class__.__name__, ', '.join('%s=%r'%(k,getattr(self,k)) for k,t in self._fields_))
 
+    def decode(self, b):
+        if isinstance(b, bytes):
+            try:
+                return b.decode("gbk")
+            except:
+                return b
+        else:
+            return b
+
+
+    def to_dict(self, decode=False):
+        if decode == False:
+            return {k: getattr(self, k) for k, v in self._fields_}
+        else:
+            return {
+                k: self.decode(getattr(self, k)) for k, v in self._fields_
+                }
+
 class Dissemination(BaseStruct): #信息分发
     def __init__(self, SequenceSeries=0, SequenceNo=0):
         self.SequenceSeries = '' #序列系列号, short
